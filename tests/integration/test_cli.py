@@ -126,6 +126,13 @@ def test_pipenv_check(PipenvInstance, pypi):
 
 
 @pytest.mark.cli
+def test_pipenv_open(PipenvInstance, pypi):
+    with PipenvInstance(pypi=pypi) as p:
+        c = p.pipenv("open test")
+        assert c.return_code == 0
+
+
+@pytest.mark.cli
 def test_pipenv_clean_pip_no_warnings(PipenvInstance):
     with PipenvInstance(chdir=True) as p:
         with open('setup.py', 'w') as f:

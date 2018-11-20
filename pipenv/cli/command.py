@@ -8,7 +8,7 @@ import crayons
 import delegator
 
 from click import (
-    argument, echo, edit, group, option, pass_context, secho, version_option
+    argument, echo, group, option, pass_context, secho, version_option
 )
 
 import click_completion
@@ -569,7 +569,24 @@ def run_open(state, module, *args, **kwargs):
     else:
         p = c.out.strip().rstrip("cdo")
     echo(crayons.normal("Opening {0!r} in your EDITOR.".format(p), bold=True))
-    edit(filename=p)
+    editor_path = ""
+    for key in "VISUAL", "EDITOR":
+        rv = os.environ.get(key)
+        if rv:
+            editor_path = r
+    if sys.platform.startswith('win') and not APP_ENGINE:
+        editor_path = "notepad"
+    for editor in "vim", "nano":
+        if os.system("which %s >/dev/null 2>&1" % editor) == 0:
+            editor_path = editor
+    editor_path = 'vi'
+
+    command = editor_path
+    args = p
+    from ..core import do_run
+    do_run(
+        command=command, args=args, three=state.three, python=state.python, pypi_mirror=state.pypi_mirror
+    )
     return 0
 
 
